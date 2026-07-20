@@ -1,5 +1,4 @@
-import psycopg2
-import psycopg2.extras
+import mysql.connector
 import os
 from dotenv import load_dotenv
 
@@ -12,17 +11,15 @@ load_dotenv()
 
 def connect_db():
 
-    connection = psycopg2.connect(
+    connection = mysql.connector.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
-        dbname=os.getenv("DB_NAME"),
+        database=os.getenv("DB_NAME"),
         port=int(os.getenv("DB_PORT"))
     )
 
-    # RealDictCursor gives rows as dicts (row["column"]),
-    # same access pattern your app.py already relies on.
-    cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor = connection.cursor(dictionary=True)
 
     return connection, cursor
 
@@ -64,20 +61,17 @@ def create_user(username, email=None):
 
         return user_id
 
-    # FIX: psycopg2 has no cursor.lastrowid (that's MySQL-only).
-    # Postgres requires RETURNING to get the inserted ID back.
     cursor.execute(
         """
         INSERT INTO users(username,email)
         VALUES(%s,%s)
-        RETURNING user_id
         """,
         (username, email)
     )
 
-    user_id = cursor.fetchone()["user_id"]
-
     connection.commit()
+
+    user_id = cursor.lastrowid
 
     close_db(connection, cursor)
 
@@ -97,7 +91,6 @@ def save_document(user_id, filename, content):
         INSERT INTO documents
         (user_id, file_name, content)
         VALUES (%s,%s,%s)
-        RETURNING document_id
         """,
         (
             user_id,
@@ -106,9 +99,9 @@ def save_document(user_id, filename, content):
         )
     )
 
-    document_id = cursor.fetchone()["document_id"]
-
     connection.commit()
+
+    document_id = cursor.lastrowid
 
     close_db(connection, cursor)
 
@@ -126,7 +119,6 @@ def save_lesson(document_id, topic, lesson_text):
         """
         INSERT INTO lessons(document_id,topic,lesson_text)
         VALUES(%s,%s,%s)
-        RETURNING lesson_id
         """,
         (
             document_id,
@@ -135,9 +127,9 @@ def save_lesson(document_id, topic, lesson_text):
         )
     )
 
-    lesson_id = cursor.fetchone()["lesson_id"]
-
     connection.commit()
+
+    lesson_id = cursor.lastrowid
 
     close_db(connection, cursor)
 
@@ -422,7 +414,7 @@ def get_average_score(user_id):
 
     close_db(connection,cursor)
 
-    return round(float(result["avg_score"] or 0),2)
+    return round(result["avg_score"] or 0,2)
 
 def get_weak_topic_count(user_id):
 

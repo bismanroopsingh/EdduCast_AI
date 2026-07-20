@@ -20,7 +20,7 @@ from llm import (
 
 from tts import text_to_audio
 from quiz import generate_quiz
-from database import (
+from database1 import (
     create_user,
     save_document,
     save_lesson,

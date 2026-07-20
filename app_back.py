@@ -20,7 +20,7 @@ from llm import (
 
 from tts import text_to_audio
 from quiz import generate_quiz
-from database import (
+from database1 import (
     create_user,
     save_document,
     save_lesson,
@@ -45,18 +45,18 @@ from database import (
     get_user_progress,
     get_weak_topics
 )
-from database import (
+from database1 import (
     get_user_progress,
     get_weak_topics,
     get_dashboard_stats,
     get_quiz_scores,
     get_top_weak_topics
 )
-from database import get_quiz_history
-from database import get_weak_topics
-from database import get_all_lessons
+from database1 import get_quiz_history
+from database1 import get_weak_topics
+from database1 import get_all_lessons
 
-from database import *
+from database1 import *
 
 
 
