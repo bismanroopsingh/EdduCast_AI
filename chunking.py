@@ -1,10 +1,18 @@
 import re
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from sentence_transformers import SentenceTransformer
 
-# Load embedding model once
-model = SentenceTransformer("all-MiniLM-L6-v2")
+# ------------------------------------------------------------
+# FIX: this file used to load its OWN separate SentenceTransformer
+# instance (torch-based, ~400-600MB), on top of the one already
+# loaded in embeddings.py — doubling memory usage unnecessarily
+# and reintroducing the torch dependency we just removed.
+#
+# Now it reuses the single shared model (fastembed/ONNX-based)
+# already loaded once in embeddings.py. Same .encode() interface,
+# so the rest of this file's logic is unchanged.
+# ------------------------------------------------------------
+from embeddings import model
 
 
 def semantic_chunk_text(
@@ -33,7 +41,7 @@ def semantic_chunk_text(
     if len(sentences) <= min_chunk_size:
         return [" ".join(sentences)]
 
-    # Generate sentence embeddings
+    # Generate sentence embeddings (shared model from embeddings.py)
     embeddings = model.encode(sentences)
 
     chunks = []
