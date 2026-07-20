@@ -17,14 +17,8 @@ PyMuPDF>=1.24.10
 # ==========================
 # Embeddings & Vector Search
 # ==========================
-sentence-transformers>=3.0.1
+fastembed>=0.3.6
 faiss-cpu>=1.8.0
-
-# ==========================
-# Machine Learning
-# ==========================
-torch>=2.4.0
-transformers>=4.44.2
 
 # ==========================
 # Database
