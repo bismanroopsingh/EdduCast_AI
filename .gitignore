@@ -1,0 +1,25 @@
+# Virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# Audio
+*.mp3
+*.wav
+
+# AI Models
+voices/
+*.onnx
+
+# FAISS
+*.faiss
+*.index
+
+# VS Code
+.vscode/
